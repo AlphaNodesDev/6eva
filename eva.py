@@ -11,14 +11,18 @@ def recognize_speech():
     recognizer = sr.Recognizer()
 
     with sr.Microphone() as source:
+        print("Listening...")
         audio = recognizer.listen(source)
 
     try:
         text = recognizer.recognize_google(audio)
+        print("You said:", text)
         return text
     except sr.UnknownValueError:
+        print("Speech Recognition could not understand audio.")
         return None
     except sr.RequestError as e:
+        print(f"Could not request results from Google Speech Recognition service; {e}")
         return None
 
 def generate_response(prompt):
@@ -34,6 +38,7 @@ def generate_response(prompt):
         return response.choices[0].text.strip()
 
     except openai.error.RateLimitError as rate_limit_error:
+        print(f"Rate limit exceeded. Using predefined response. Details: {rate_limit_error}")
         return "I'm currently experiencing high demand. Please try again later."
 
 def speak(text):
