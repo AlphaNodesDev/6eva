@@ -5,34 +5,27 @@ import openai
 import pygame
 import time
 
-# Set your OpenAI GPT API key
 openai.api_key = "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"
 
 def recognize_speech():
     recognizer = sr.Recognizer()
 
     with sr.Microphone() as source:
-        print("Listening...")
         audio = recognizer.listen(source)
 
     try:
         text = recognizer.recognize_google(audio)
-        print("You said:", text)
         return text
     except sr.UnknownValueError:
-        print("Speech Recognition could not understand audio.")
         return None
     except sr.RequestError as e:
-        print(f"Could not request results from Google Speech Recognition service; {e}")
         return None
 
 def generate_response(prompt):
     try:
-        # Check for custom questions and provide predefined answers
         if "Who is your Father" in prompt.lower():
             return "I am an artificial intelligent bot created by UKF College of Engineering."
 
-        # If no custom question matches, use OpenAI GPT for a generic response
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=prompt,
@@ -41,7 +34,6 @@ def generate_response(prompt):
         return response.choices[0].text.strip()
 
     except openai.error.RateLimitError as rate_limit_error:
-        print(f"Rate limit exceeded. Using predefined response. Details: {rate_limit_error}")
         return "I'm currently experiencing high demand. Please try again later."
 
 def speak(text):
@@ -53,7 +45,6 @@ def speak(text):
     pygame.mixer.music.play()
 
     while pygame.mixer.music.get_busy():
-        # Wait for the audio to finish playing
         time.sleep(1)
 
     pygame.mixer.quit()
